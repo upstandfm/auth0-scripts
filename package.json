@@ -1,0 +1,37 @@
+{
+  "name": "auth0-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Auth0 hooks and rules",
+  "scripts": {
+    "lint": "eslint 'src/**/*.js'",
+    "lint:format": "npm run lint -- --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/upstandfm/auth0-scripts.git"
+  },
+  "author": "Daniël Illouz <daniel.illouz@me.com> (https://www.danillouz.dev/)",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/upstandfm/auth0-scripts/issues"
+  },
+  "homepage": "https://github.com/upstandfm/auth0-scripts#readme",
+  "lint-staged": {
+    "src/**/*.{js,json,md}": "npm run lint:format"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
+    "prettier": "^1.19.1"
+  },
+  "dependencies": {}
+}

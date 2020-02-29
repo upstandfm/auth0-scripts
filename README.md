@@ -1,2 +1,3 @@
-# auth0-scripts
-Auth0 hooks and rules
+# Auth0 scripts
+
+Auth0 hooks and rules.
