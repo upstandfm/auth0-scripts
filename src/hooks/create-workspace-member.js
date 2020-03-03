@@ -146,7 +146,19 @@ module.exports = async function createWorkspaceMember(user, context, cb) {
 
     // TODO: update invite status
 
-    // TODO: unset metadata
+    // We have to explicitly set new values, e.g. we can't delete properties,
+    // because Auth0 does some weird stuff with merging metadata object props
+    //
+    // For more info see:
+    // https://auth0.com/docs/api/management/v2#!/Users/patch_users_by_id
+    const newAppMetadata = {
+      isUserInvite: false,
+      inviteMsg: ''
+    };
+
+    // For SDK docs see:
+    // https://auth0.github.io/node-auth0/module-management.ManagementClient.html#updateAppMetadata
+    await managementClient.updateAppMetadata({ id: userId }, newAppMetadata);
 
     cb();
   } catch (err) {
