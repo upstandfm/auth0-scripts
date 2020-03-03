@@ -8,6 +8,8 @@
 const fetch = require('node-fetch');
 const auth0 = require('auth0');
 
+const UPSTAND_FM_API = 'https://api.upstand.fm';
+
 /**
  * Get an access token to interact with the Upstand FM API.
  *
@@ -62,7 +64,7 @@ async function _getToken(secrets) {
  * @return {Promise} Resolves with the created member
  */
 async function _createMember(token, workspaceId, userId, email) {
-  const url = `https://api.upstand.fm/workspaces/${workspaceId}/members`;
+  const url = `${UPSTAND_FM_API}/workspaces/${workspaceId}/members`;
   const options = {
     method: 'POST',
     headers: {
@@ -79,6 +81,38 @@ async function _createMember(token, workspaceId, userId, email) {
 
   if (!res.ok) {
     throw new Error('Failed to create workspace member');
+  }
+
+  return res.json();
+}
+
+/**
+ * Update workspace invite status.
+ *
+ * @param {String} token
+ * @param {String} workspaceId
+ * @param {String} email
+ *
+ * @return {Promise} Resolves with the created member
+ */
+async function _updateInviteStatus(token, workspaceId, email) {
+  const url = `${UPSTAND_FM_API}/invites/status`;
+  const options = {
+    method: 'PATCH',
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      workspaceId,
+      email,
+      status: 'accepted'
+    })
+  };
+  const res = await fetch(url, options);
+
+  if (!res.ok) {
+    throw new Error('Failed to update workspace invite status');
   }
 
   return res.json();
@@ -141,10 +175,11 @@ module.exports = async function createWorkspaceMember(user, context, cb) {
       return;
     }
 
+    const { workspaceId } = app_metadata;
+    const { email } = user;
     const token = await _getToken(secrets);
-    await _createMember(token, app_metadata.workspaceId, userId, user.email);
-
-    // TODO: update invite status
+    await _createMember(token, workspaceId, userId, email);
+    await _updateInviteStatus(token, workspaceId, email);
 
     // We have to explicitly set new values, e.g. we can't delete properties,
     // because Auth0 does some weird stuff with merging metadata object props
